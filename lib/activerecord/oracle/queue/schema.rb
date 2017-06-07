@@ -9,7 +9,8 @@ module Activerecord
       module Schema
 
         def self.included(base)
-          ActiveRecord::ConnectionAdapters::AbstractAdapter.send(:include, Statements)
+          ActiveRecord::ConnectionAdapters::AbstractAdapter.send :include, Statements
+          ActiveRecord::Migration::CommandRecorder.send          :include, CommandRecorder
         end
 
         module Statements
@@ -65,6 +66,18 @@ module Activerecord
             def remove_queue_message_type(payload_name)
               execute("DROP TYPE #{payload_name}")
             end
+        end
+
+        module CommandRecorder
+          def add_queue(*args)
+            record(:add_queue, args)
+          end
+
+          private
+
+          def invert_add_queue(args)
+            [:remove_queue, args]
+          end
         end
       end
     end
