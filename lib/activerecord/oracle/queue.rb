@@ -4,7 +4,7 @@ require "activerecord/oracle/queue/railtie"
 module Activerecord
   module Oracle
     module Queue
-      # Your code goes here...
+      autoload :Watcher, "activerecord/oracle/queue/watcher"
     end
   end
 end
