@@ -1,3 +1,6 @@
+require "erb"
+require "pathname"
+
 module Activerecord
   module Oracle
     module Queue
@@ -36,6 +39,7 @@ module Activerecord
                 );
               END;
             SQL
+            add_queue_package(binding)
           end
 
           def remove_queue(queue_name, payload_name: "message_t")
@@ -55,9 +59,33 @@ module Activerecord
               END;
             SQL
             remove_queue_message_type(payload_name)
+            execute("DROP PACKAGE #{queue_name}_queue")
           end
 
           private
+
+            def add_queue_package(args)
+              execute(
+                render_package(args, :definition)
+              )
+              execute(
+                render_package(args, :body)
+              )
+            end
+
+            def render_package(args, file)
+              ERB.new(
+                package_template(file)
+              ).result(
+                args
+              )
+            end
+
+            def package_template(file)
+              IO.read(
+                Pathname.new(__FILE__).join("../package/#{file}.sql")
+              )
+            end
 
             def add_queue_message_type(payload_name, payload_object)
               execute("CREATE OR REPLACE TYPE #{payload_name} AS OBJECT (#{payload_object})")
