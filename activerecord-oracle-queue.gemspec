@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "activerecord-oracle-queue"
   spec.version       = Activerecord::Oracle::Queue::VERSION
   spec.authors       = ["Roman Simecek"]
-  spec.email         = ["roman@good2go.ch"]
+  spec.email         = ["roman.v.simecek@gmail.com"]
 
   spec.summary       = %q{Extension of ActiveRecord for ORACLE queues}
   spec.description   = %q{This gem extends active record and it's migrations for oracle queue support.}
