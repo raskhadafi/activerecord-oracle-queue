@@ -28,18 +28,32 @@ module Activerecord
 
             cursor.bind_param(":p", nil, String, 4000)
 
+            Rails.logger.info(log_message("Starting watching queue #{self::QueueName}"))
+
             while true
               cursor.exec() # retrieve message
 
-              json = JSON.parse(cur[":p"])
-              instance = self.class.new
-              instance.perform(json)
+              begin
+                Rails.logger.info(log_message("Retrieve message with #{cursor[":p"]}"))
+                json     = ActiveSupport::JSON.decode(cursor[":p"])
+                instance = self.class.new
+
+                Rails.logger.info(log_message("Perform with #{cursor[":p"]}"))
+                instance.perform(json)
+              rescue JSON::ParserError => exception
+                Rails.logger.error(log_message(exception))
+              end
 
               connection.commit # remove from AQ.  dequeue isn't complete until this happens
+              Rails.logger.info(log_message("Perform is done... Dequeueing..."))
             end
           end
 
           private
+
+            def log_message(message)
+              "#{self}: #{message}"
+            end
 
             def fetch_cursor(connection)
               connection.parse(
