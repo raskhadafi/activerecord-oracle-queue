@@ -22,8 +22,9 @@ module Activerecord
         module ClassMethods
 
           def watch
-            connection = fetch_connection
-            cursor     = fetch_cursor(connection)
+            Rails.logger = Logger.new(STDOUT)
+            connection   = fetch_connection
+            cursor       = fetch_cursor(connection)
 
             cursor.bind_param(":p", nil, String, 4000)
 
