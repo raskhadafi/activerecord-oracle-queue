@@ -1,4 +1,4 @@
-require "railties"
+require "rails"
 require "activerecord/oracle/queue/glue"
 
 module Activerecord
