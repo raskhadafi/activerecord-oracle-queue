@@ -36,9 +36,10 @@ module Activerecord
               begin
                 Rails.logger.info(log_message("Retrieve message with #{cursor[":p"]}"))
                 json     = ActiveSupport::JSON.decode(cursor[":p"])
-                instance = self.class.new
+                instance = self.new
 
                 Rails.logger.info(log_message("Perform with #{cursor[":p"]}"))
+
                 instance.perform(json)
               rescue JSON::ParserError => exception
                 Rails.logger.error(log_message(exception))
