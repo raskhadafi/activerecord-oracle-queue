@@ -19,6 +19,12 @@ module Activerecord
           receiver.const_set :QueueName, @queue_name
         end
 
+        module InstanceMethods
+          def perform(data)
+            raise "Has to be implemented"
+          end
+        end
+
         module ClassMethods
 
           def watch
