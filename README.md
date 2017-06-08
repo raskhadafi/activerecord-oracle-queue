@@ -1,8 +1,7 @@
 # Activerecord::Oracle::Queue
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/activerecord/oracle/queue`. To experiment with that code, run `bin/console` for an interactive prompt.
+Activerecord::Oracle::Queue provides access to Oracle Advanced Queuing from Rails applications.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -22,7 +21,36 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Migration
+
+Create a migration which generates a queue with json stored:
+
+```ruby
+class CreateQueue < ActiveRecord::Migration
+  def change
+    add_queue :yourqueue
+  end
+end
+```
+
+### Model
+
+
+```ruby
+class QueueWorker
+  include Activerecord::Oracle::Queue::Watcher.new(:yourqueue)
+
+  def perform(json)
+    puts json
+  end
+end
+```
+
+### Execution
+
+```ruby
+rails runner QueueWorker.watch
+```
 
 ## Development
 
