@@ -19,6 +19,8 @@ module Activerecord
         module Statements
 
           def add_queue(queue_name, payload_name: "message_t", payload_object: "json VARCHAR2(4000)")
+            schema, queue_name = remove_schema_from_queue_name(queue_name)
+
             raise ArgumentError, "The queue name can not be longer than 20 chars." if queue_name.length > 20
 
             add_queue_message_type(payload_name, payload_object)
@@ -43,6 +45,8 @@ module Activerecord
           end
 
           def remove_queue(queue_name, payload_name: "message_t")
+            schema, queue_name = remove_schema_from_queue_name(queue_name)
+
             execute(<<-SQL)
               BEGIN
                 DBMS_AQADM.STOP_QUEUE(
@@ -63,6 +67,14 @@ module Activerecord
           end
 
           private
+
+            def remove_schema_from_queue_name(queue_name)
+              if queue_name.include?(".")
+                queue_name.split(".")[0,2]
+              else
+                [nil, queue_name]
+              end
+            end
 
             def add_queue_package(args)
               execute(

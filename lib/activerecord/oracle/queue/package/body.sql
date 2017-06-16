@@ -11,7 +11,7 @@ create or replace PACKAGE BODY <%= queue_name %>_queue IS
     msg.json                    := payload;
     message_properties.priority := 1;  -- give all messages same priority
     DBMS_AQ.ENQUEUE(
-      queue_name         => '<%= queue_name %>',
+      queue_name         => '<%= [schema, queue_name].compact.join(".") %>',
       enqueue_options    => enqueue_options,
       message_properties => message_properties,
       payload            => msg,
@@ -28,7 +28,7 @@ create or replace PACKAGE BODY <%= queue_name %>_queue IS
     message_properties DBMS_AQ.MESSAGE_PROPERTIES_T;
   BEGIN
     DBMS_AQ.DEQUEUE(
-      queue_name         => '<%= queue_name %>',
+      queue_name         => '<%= [schema, queue_name].compact.join(".") %>',
       dequeue_options    => dequeue_options,
       message_properties => message_properties,
       payload            => msg,
